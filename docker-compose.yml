@@ -1,0 +1,39 @@
+version: '3'
+services:
+  app:
+    build: .
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+    environment:
+      - POSTGRES_DB=petsnapai_db
+      - POSTGRES_USER=petsnapai_db_user
+      - POSTGRES_PASSWORD=petsnapai_db_pass
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_DB=petsnapai_db
+      - POSTGRES_USER=petsnapai_db_user
+      - POSTGRES_PASSWORD=petsnapai_db_pass
+  nginx:
+    image: nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - app
+    # Define the nginx configuration for the service
+    # using the `configs` property
+    configs:
+      - source: nginx.conf
+        target: /etc/nginx/nginx.conf
+
+# Define a config for the nginx service
+# This config file will be mounted into the nginx container
+# at the path specified in the `target` property of the `configs`
+# property of the nginx service
+configs:
+  nginx.conf:
+    file: ./nginx.conf
+
+
